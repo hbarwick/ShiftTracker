@@ -13,10 +13,5 @@ namespace ShiftTrackerAPI.Models
 
         public DbSet<Shift> Shifts { get; set; } = null!;
 
-        //public string DbPath { get; }
-
-        //protected override void OnConfiguring(DbContextOptionsBuilder options)
-        //    => options.UseSqlServer(@"Data Source=(localdb)\localdb;Integrated Security=true;Database=Shifts");
-
     }
 }
