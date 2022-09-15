@@ -1,4 +1,6 @@
 ﻿using ShiftEntry.Controllers;
+using ShiftEntry.Helpers;
+using ShiftTrackerAPI.Models;
 using System.Security.Cryptography.X509Certificates;
 
 namespace ShiftEntry
@@ -36,6 +38,7 @@ namespace ShiftEntry
                     ViewShifts();
                     break;
                 case "2":
+                    EnterShift();
                     break;
                 case "3":
                     break;
@@ -46,6 +49,51 @@ namespace ShiftEntry
                     ChooseOption();
                     break;
             }
+        }
+
+        private static void EnterShift()
+        {
+            Console.WriteLine("---------------------------");
+            Console.WriteLine("      Enter New Shift      ");
+            Console.WriteLine("---------------------------\n");
+
+            var choice = Inputs.GetYesNo("Use today's date?: ");
+
+            string startDate;
+            if (choice == "Y")
+            {
+                startDate = DateOperations.GetTodaysDate();
+            }
+            else
+            {
+                startDate = DateOperations.EnterNewDate("Enter shift date: ");
+            }
+
+            var startTime = DateOperations.EnterNewTime("Enter shift start time: ");
+
+            choice = Inputs.GetYesNo("Shift ended on same day? ");
+            string endDate;
+            if (choice.Substring(0, 1).ToUpper() == "Y")
+            {
+                endDate = startDate;
+            }
+            else
+            {
+                endDate = DateOperations.EnterNewDate("Enter shift end date: ");
+            }
+
+            var endTime = DateOperations.EnterNewTime("Enter shift end time: ");
+
+            var start = DateOperations.ParseDateTime(startDate, startTime);
+            var end = DateOperations.ParseDateTime(endDate, endTime);
+            var location = Inputs.GetString("Enter shift location: ");
+            var pay = Inputs.GetDecimal("Enter hourly pay: ");
+
+            Console.WriteLine(start);
+            Console.WriteLine(end);
+            Console.WriteLine(location);
+            Console.WriteLine(pay);
+
         }
 
         private static void ViewShifts()
