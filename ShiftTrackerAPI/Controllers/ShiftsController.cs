@@ -80,11 +80,25 @@ namespace ShiftTrackerAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Shift>> PostShift(Shift shift)
         {
-          if (_context.Shifts == null)
-          {
-              return Problem("Entity set 'ShiftContext.Shifts'  is null.");
-          }
+            if (_context.Shifts == null)
+            {
+                return Problem("Entity set 'ShiftContext.Shifts'  is null.");
+            }
+
+            if (shift.Start == DateTime.MinValue || shift.End == DateTime.MinValue)
+            {
+                    return Problem("Missing shift start / end");
+            }
+
+            if (shift.Pay == (decimal)0.00)
+            {
+                return Problem("Pay missing or zero");
+            }
+            var minutes = shift.End - shift.Start;
+            shift.Minutes = (decimal)minutes.TotalMinutes;
             _context.Shifts.Add(shift);
+
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetShift), new { id = shift.Id }, shift);
