@@ -61,20 +61,5 @@
             string date = dateTime.ToShortDateString();
             return date;
         }
-
-        /// <summary>
-        /// Returns the first and last date of the month, defaulting to current month
-        /// </summary>
-        /// <param name="current">Optional parameter (default 0), deducts a month. E.G pass 1 to 
-        /// return previos month's start and end date</param>
-        /// <returns>Packaged Tuple of 2xDateTime objects</returns>
-        public static (DateTime, DateTime) GetFirstAndLastOfMonth(int current = 0)
-        {
-            int currentMonth = DateTime.Now.Month - current;
-            int currentYear = DateTime.Now.Year;
-            var firstOfMonth = new DateTime(currentYear, currentMonth, 1);
-            var lastOfMonth = firstOfMonth.AddMonths(1).AddSeconds(-1);
-            return (firstOfMonth, lastOfMonth);
-        }
     }
 }
