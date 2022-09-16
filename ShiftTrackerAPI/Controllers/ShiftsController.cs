@@ -90,10 +90,8 @@ namespace ShiftTrackerAPI.Controllers
                     return Problem("Missing shift start / end");
             }
 
-            var minutes = shift.End - shift.Start;
-            shift.Minutes = (decimal)minutes.TotalMinutes;
-            _context.Shifts.Add(shift);
 
+            _context.Shifts.Add(shift);
 
             await _context.SaveChangesAsync();
 

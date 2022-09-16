@@ -8,7 +8,7 @@ namespace ShiftEntry.Controllers
 {
     internal static class APIInterface
     {
-        private const string apiPath = "https://localhost:7267/api/shifts";
+        private const string APIPATH = "https://localhost:7267/api/shifts";
 
         static internal async Task<List<Shift>> GetShifts()
         {
@@ -17,7 +17,7 @@ namespace ShiftEntry.Controllers
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("User-Agent", "C# Requester");
 
-            var streamTask = client.GetStreamAsync(apiPath);
+            var streamTask = client.GetStreamAsync(APIPATH);
 
             var shifts = await JsonSerializer.DeserializeAsync<List<Shift>>(await streamTask);
 
@@ -33,7 +33,7 @@ namespace ShiftEntry.Controllers
 
             var json = JsonSerializer.Serialize(shift);
             var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
-            await client.PostAsync(apiPath, content);
+            await client.PostAsync(APIPATH, content);
         }
 
         static internal async Task DeleteShift(int id)
@@ -43,8 +43,22 @@ namespace ShiftEntry.Controllers
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             client.DefaultRequestHeaders.Add("User-Agent", "C# Requester");
 
-            var path = apiPath + "/" + id;
+            var path = APIPATH + "/" + id;
             await client.DeleteAsync(path);
+        }
+
+        static internal async Task PutShift(Shift shift)
+        {
+            using HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("User-Agent", "C# Requester");
+
+            var path = APIPATH + "/" + shift.Id;
+            var json = JsonSerializer.Serialize(shift);
+
+            var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
+            await client.PutAsync(path, content);
         }
     }
 }

@@ -100,13 +100,15 @@ namespace ShiftEntry
             var end = DateOperations.ParseDateTime(endDate, endTime);
             var location = Inputs.GetString("Enter shift location: ");
             var pay = Inputs.GetDecimal("Enter hourly pay: ");
+            var minutes = (decimal)(end - start).TotalMinutes;
 
             Shift shift = new Shift
             {
                 Start = start,
                 End = end,
                 Pay = pay,
-                Location = location
+                Location = location,
+                Minutes = minutes
             };
 
             var task = APIInterface.PostShift(shift);
@@ -119,10 +121,59 @@ namespace ShiftEntry
         private static void UpdateShift()
         {
             var shift = SelectShift("update");
+
+            Console.WriteLine("\n0 - Return to Main Menu");
+            Console.WriteLine("1 - Update Shift Start");
+            Console.WriteLine("2 - Update Shift End");
+            Console.WriteLine("3 - Update Location");
+            Console.WriteLine("4 - Update Pay");
+
+            UpdateOption(shift);
+        }
+
+        private static void UpdateOption(Shift shift)
+        {
+            var choice = Inputs.GetString("\nChoose category to update: ");
+
+            switch (choice)
+            {
+                case "0":
+                    break;
+                case "1":
+                    var startdate = DateOperations.EnterNewDate("Enter Date: ");
+                    var starttime = DateOperations.EnterNewTime("Enter Time: ");
+                    var start = DateOperations.ParseDateTime(startdate, starttime);
+                    shift.Start = start;
+                    shift.Minutes = (decimal)(shift.End - shift.Start).TotalMinutes;
+                    break;
+                case "2":
+                    var enddate = DateOperations.EnterNewDate("Enter Date: ");
+                    var endtime = DateOperations.EnterNewTime("Enter Time: ");
+                    var end = DateOperations.ParseDateTime(enddate, endtime);
+                    shift.End = end;
+                    shift.Minutes = (decimal)(shift.End - shift.Start).TotalMinutes;
+                    break;
+                case "3":
+                    var location = Inputs.GetString("Enter location: ");
+                    shift.Location = location;
+                    break;
+                case "4":
+                    var pay = Inputs.GetDecimal("Enter pay: ");
+                    shift.Pay = pay;
+                    break;
+                default:
+                    UpdateOption(shift);
+                    break;
+            }
+            var task = APIInterface.PutShift(shift);
+            task.Wait();
+
+            Console.Write("Shift updated, press enter to return to main menu: ");
+            Console.ReadLine();
             MainMenu();
         }
 
-        private static void DeleteShift()
+    private static void DeleteShift()
         {
             var shift = SelectShift("delete");
             var choice = Inputs.GetYesNo("Are you sure you want to delete this shift?\nY to delete or N to return to main menu: ");
