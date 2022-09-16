@@ -90,10 +90,6 @@ namespace ShiftTrackerAPI.Controllers
                     return Problem("Missing shift start / end");
             }
 
-            if (shift.Pay == (decimal)0.00)
-            {
-                return Problem("Pay missing or zero");
-            }
             var minutes = shift.End - shift.Start;
             shift.Minutes = (decimal)minutes.TotalMinutes;
             _context.Shifts.Add(shift);

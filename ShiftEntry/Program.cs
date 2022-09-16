@@ -1,7 +1,6 @@
 ﻿using ShiftEntry.Controllers;
 using ShiftEntry.Helpers;
 using ShiftTrackerAPI.Models;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ShiftEntry
 {
@@ -41,8 +40,10 @@ namespace ShiftEntry
                     EnterShift();
                     break;
                 case "3":
+                    UpdateShift();
                     break;
                 case "4":
+                    DeleteShift();
                     break;
                 default:
                     Console.WriteLine("Invalid entry, please try again");
@@ -50,6 +51,16 @@ namespace ShiftEntry
                     break;
             }
         }
+
+        private static void ViewShifts()
+        {
+            var shifts = APIInterface.GetShifts().Result;
+            Reports.DisplayShifts(shifts);
+            Console.Write("\nPress enter to return to Main Menu: ");
+            Console.ReadLine();
+            MainMenu();
+        }
+
 
         private async static void EnterShift()
         {
@@ -72,8 +83,9 @@ namespace ShiftEntry
             var startTime = DateOperations.EnterNewTime("Enter shift start time: ");
 
             choice = Inputs.GetYesNo("Shift ended on same day? ");
+
             string endDate;
-            if (choice.Substring(0, 1).ToUpper() == "Y")
+            if (choice == "Y")
             {
                 endDate = startDate;
             }
@@ -88,11 +100,6 @@ namespace ShiftEntry
             var end = DateOperations.ParseDateTime(endDate, endTime);
             var location = Inputs.GetString("Enter shift location: ");
             var pay = Inputs.GetDecimal("Enter hourly pay: ");
-
-            Console.WriteLine(start);
-            Console.WriteLine(end);
-            Console.WriteLine(location);
-            Console.WriteLine(pay);
 
             Shift shift = new Shift
             {
@@ -109,14 +116,46 @@ namespace ShiftEntry
             MainMenu();
         }
 
-        private static void ViewShifts()
+        private static void UpdateShift()
+        {
+            var shift = SelectShift("update");
+            MainMenu();
+        }
+
+        private static void DeleteShift()
+        {
+            var shift = SelectShift("delete");
+            var choice = Inputs.GetYesNo("Are you sure you want to delete this shift?\nY to delete or N to return to main menu: ");
+            if (choice == "Y")
+            {
+                var task = APIInterface.DeleteShift(shift.Id);
+                task.Wait();
+                Console.Write($"Shift {shift.Id} deleted, press enter to return to main menu: ");
+                Console.ReadLine();
+            }
+            MainMenu();
+        }
+
+
+        private static Shift SelectShift(string task)
         {
             var shifts = APIInterface.GetShifts().Result;
             Reports.DisplayShifts(shifts);
-            Console.Write("\nPress enter to return to Main Menu: ");
-            Console.ReadLine();
-            MainMenu();
+            Console.WriteLine();
 
+            var choice = Inputs.GetInt($"Enter ID of the shift to {task}: ");
+            var selected = shifts.Where(x => x.Id == choice).ToList();
+            
+            while (selected.Count == 0)
+            {
+                Console.WriteLine("Invalid shift ID, please try again.");
+                choice = Inputs.GetInt($"Enter ID of the shift to {task}: ");
+                selected = shifts.Where(x => x.Id == choice).ToList();
+            }
+
+            Reports.DisplayShifts(selected);
+
+            return selected[0];
         }
     }
 }

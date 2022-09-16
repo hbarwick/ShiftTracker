@@ -35,5 +35,16 @@ namespace ShiftEntry.Controllers
             var content = new StringContent(json.ToString(), Encoding.UTF8, "application/json");
             await client.PostAsync(apiPath, content);
         }
+
+        static internal async Task DeleteShift(int id)
+        {
+            using HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("User-Agent", "C# Requester");
+
+            var path = apiPath + "/" + id;
+            await client.DeleteAsync(path);
+        }
     }
 }
