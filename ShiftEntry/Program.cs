@@ -170,7 +170,7 @@ namespace ShiftEntry
             MainMenu();
         }
 
-        private static void DeleteShift()
+    private static void DeleteShift()
         {
             var shift = SelectShift("delete");
             var choice = Inputs.GetYesNo("Are you sure you want to delete this shift?\nY to delete or N to return to main menu: ");
