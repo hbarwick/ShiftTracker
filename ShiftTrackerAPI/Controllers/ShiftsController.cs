@@ -85,15 +85,7 @@ namespace ShiftTrackerAPI.Controllers
                 return Problem("Entity set 'ShiftContext.Shifts'  is null.");
             }
 
-            if (shift.Start == DateTime.MinValue || shift.End == DateTime.MinValue)
-            {
-                    return Problem("Missing shift start / end");
-            }
-
-            var minutes = shift.End - shift.Start;
-            shift.Minutes = (decimal)minutes.TotalMinutes;
             _context.Shifts.Add(shift);
-
 
             await _context.SaveChangesAsync();
 
