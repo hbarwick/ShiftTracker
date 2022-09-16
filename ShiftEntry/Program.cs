@@ -51,7 +51,7 @@ namespace ShiftEntry
             }
         }
 
-        private static void EnterShift()
+        private async static void EnterShift()
         {
             Console.WriteLine("---------------------------");
             Console.WriteLine("      Enter New Shift      ");
@@ -94,12 +94,28 @@ namespace ShiftEntry
             Console.WriteLine(location);
             Console.WriteLine(pay);
 
+            Shift shift = new Shift
+            {
+                Start = start,
+                End = end,
+                Pay = pay,
+                Location = location
+            };
+
+            var task = APIInterface.PostShift(shift);
+            task.Wait();
+            Console.Write("\nShift post complete. Press enter to return to Main Menu: ");
+            Console.ReadLine();
+            MainMenu();
         }
 
         private static void ViewShifts()
         {
             var shifts = APIInterface.GetShifts().Result;
             Reports.DisplayShifts(shifts);
+            Console.Write("\nPress enter to return to Main Menu: ");
+            Console.ReadLine();
+            MainMenu();
 
         }
     }
