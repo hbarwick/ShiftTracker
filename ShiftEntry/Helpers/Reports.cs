@@ -1,7 +1,7 @@
 ﻿using ConsoleTableExt;
 using ShiftTrackerAPI.Models;
 
-namespace ShiftEntry.Controllers
+namespace ShiftEntry.Helpers
 {
     internal class Reports
     {
@@ -13,7 +13,7 @@ namespace ShiftEntry.Controllers
             {
                 tableData.Add(new List<object> { shift.Id, shift.Start, shift.End, shift.Pay, shift.Minutes, shift.Location });
             }
-            ConsoleTableExt.ConsoleTableBuilder
+            ConsoleTableBuilder
                 .From(tableData)
                 .WithColumn("Id", "Shift Start", "Shift End", "Pay", "Minutes", "Location")
                 .ExportAndWriteLine();
